@@ -1,0 +1,517 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap");
+
+/* 主题主色：顶栏与图案描边统一 */
+:root {
+  --theme-primary: #4971df;
+  --theme-primary-soft: rgba(73, 113, 223, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* 主内容区：#4971df 色系叠层 + 细网格图案 + 低对比纹理图 */
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans", sans-serif;
+  color: #1f2a44;
+  background-color: #e4ebfb;
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(240, 244, 255, 0.94) 0%,
+      rgba(225, 235, 252, 0.92) 40%,
+      rgba(212, 226, 250, 0.9) 100%
+    ),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%234971df' stroke-opacity='0.09' stroke-width='0.7'%3E%3Cpath d='M0 32h64M32 0v64'/%3E%3Cpath d='M0 0l64 64M64 0L0 64' stroke-opacity='0.05'/%3E%3C/g%3E%3C/svg%3E"),
+    url("https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=1800&q=80");
+  background-position: center center, 0 0, center center;
+  background-size: auto, 64px 64px, cover;
+  background-attachment: scroll, scroll, fixed;
+  background-repeat: no-repeat, repeat, no-repeat;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  background: transparent !important;
+}
+
+.app-shell.ant-layout {
+  min-height: 100vh;
+}
+
+.app-shell.ant-layout,
+.app-shell .ant-layout-content {
+  background: transparent !important;
+}
+
+.app-shell .ant-layout-content.app-content {
+  border-top: none !important;
+  box-shadow: none !important;
+  margin-top: 0 !important;
+}
+
+/* 顶栏 + 页签区：纯色 #4971df；不用底投影，避免与主内容区之间像有一条分界线 */
+.app-header {
+  position: relative;
+  z-index: 10;
+  height: auto !important;
+  line-height: normal !important;
+  padding: 0 !important;
+  background: var(--theme-primary) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.app-header.ant-layout-header {
+  border: none !important;
+}
+
+.header-top {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto minmax(180px, 1fr);
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 20px 6px;
+  min-height: 52px;
+}
+
+.header-top-left {
+  justify-self: start;
+  min-width: 0;
+}
+
+.header-top-right {
+  justify-self: end;
+  min-width: 0;
+}
+
+.header-center-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.header-nav-link {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.header-nav-link:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.header-nav-link--active {
+  background: rgba(255, 255, 255, 0.38);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.65);
+}
+
+.header-nav-link--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 底边不设 padding，避免与 .app-content 上间距叠加成「一大段空」 */
+.header-tabs-wrap {
+  margin-top: 0;
+  padding: 4px 16px 0;
+  background: transparent;
+  border: none;
+  position: relative;
+  z-index: 1;
+}
+
+.header-tabs {
+  margin-bottom: 0 !important;
+}
+
+.header-tabs .ant-tabs-nav {
+  margin: 0 !important;
+}
+
+.header-tabs .ant-tabs-nav-wrap::before,
+.header-tabs .ant-tabs-nav-wrap::after {
+  display: none !important;
+}
+
+/* antd Tabs 在 .ant-tabs-nav::before 画整条底边框，是「页签下横线」的主要来源，必须关掉 */
+.header-tabs .ant-tabs-nav::before {
+  display: none !important;
+  border: none !important;
+  content: none !important;
+  height: 0 !important;
+}
+
+.header-tabs .ant-tabs-tab {
+  padding: 5px 12px 6px !important;
+  font-size: 13px;
+  margin: 0 3px 0 0 !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-bottom: none !important;
+  border-radius: 8px 8px 0 0 !important;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.header-tabs .ant-tabs-tab:hover {
+  color: rgba(255, 255, 255, 0.96) !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  border-bottom: none !important;
+}
+
+.header-tabs .ant-tabs-tab-remove {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+.header-tabs .ant-tabs-tab-remove:hover {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.header-tabs .ant-tabs-tab-active .ant-tabs-tab-remove {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.header-tabs .ant-tabs-tab-active .ant-tabs-tab-remove:hover {
+  color: #ffffff !important;
+}
+
+.header-tabs .ant-tabs-tab-active .header-tab-label {
+  color: rgba(255, 255, 255, 0.98) !important;
+  text-shadow: 0 1px 2px rgba(0, 20, 60, 0.18);
+}
+
+.header-tabs .ant-tabs-ink-bar {
+  display: none !important;
+}
+
+/* 仅作导航的 Tabs 不渲染内容区，避免 antd 内容槽顶边在主区域上方形成一条线 */
+.header-tabs .ant-tabs-content-holder {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  min-height: 0 !important;
+}
+
+.header-tab-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/*
+ * card + top 时 antd 会把激活页签 borderBottomColor 设为 colorBgContainer（白），
+ * 主内容区是浅蓝底时会形成明显「白边」—— 强制底边透明。
+ */
+.header-tabs.ant-tabs-card.ant-tabs-top .ant-tabs-tab.ant-tabs-tab-active,
+.header-tabs .ant-tabs-tab-active {
+  background: rgba(255, 255, 255, 0.28) !important;
+  border: 1px solid rgba(255, 255, 255, 0.42) !important;
+  border-bottom: none !important;
+  border-bottom-color: transparent !important;
+  border-radius: 8px 8px 0 0 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+
+.home-entry {
+  color: #1f2a44 !important;
+  padding: 1px 8px !important;
+  margin-top: 5px;
+  text-align: left;
+  font-size: 12px;
+  border-radius: 6px 6px 0 0 !important;
+  border: 1px solid rgba(198, 214, 242, 0.9) !important;
+  border-bottom-color: #eef4ff !important;
+  background: linear-gradient(to bottom, #4971df 0%, #eef4ff 100%) !important;
+}
+
+.header-avatar {
+  background: linear-gradient(135deg, #7c9aeb 0%, #4971df 100%) !important;
+}
+
+.header-logo-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.header-title {
+  color: #f8fbff !important;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+}
+
+.header-subtitle {
+  color: #eaf1ff;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.header-user-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+}
+
+.header-user-icon {
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.header-user-text {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.account-btn {
+  border: none !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  border-radius: 0 !important;
+  height: 30px;
+  width: 30px;
+  min-width: 30px !important;
+  padding: 0 !important;
+}
+
+.account-btn:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #ffffff !important;
+}
+
+/* 与顶栏页签的间距只在这里设一次（约 10px），不贴死也不叠多层 */
+.app-content {
+  padding: 10px 12px 14px;
+  min-height: calc(100vh - 120px);
+  background: transparent !important;
+}
+
+.app-content-inner {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1240px;
+  padding: 0 12px;
+}
+
+.app-content-inner--system {
+  max-width: none;
+  padding: 0 4px;
+}
+
+/* 客户管理：主内容区纵向铺满，避免底部大块留白 */
+.app-content.app-content--fill {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.app-shell > .ant-layout-content.app-content--fill {
+  flex: 1 1 auto;
+}
+
+.app-content-inner--fill {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+}
+
+.home-toolbar {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.home-left-panel {
+  min-height: 620px;
+  height: 100%;
+}
+
+.dashboard-panel {
+  border-radius: 10px !important;
+  border: 1px solid #e8edf5 !important;
+  box-shadow: 0 4px 14px rgba(31, 42, 68, 0.08) !important;
+  background: #ffffff !important;
+}
+
+.dashboard-panel .ant-card-head {
+  background: #ffffff !important;
+  border-bottom: 1px solid #eef2f8 !important;
+}
+
+.dashboard-panel .ant-card-body {
+  background: #ffffff !important;
+}
+
+.home-board {
+  margin-inline: 0 !important;
+}
+
+.home-board-col {
+  display: flex;
+}
+
+.home-board-col .ant-card {
+  width: 100%;
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 8px;
+}
+
+.quick-item {
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  padding: 8px 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.quick-item:hover {
+  background: #f5f8fe;
+}
+
+.quick-item-icon {
+  font-size: 22px;
+  color: #6f8cbb;
+}
+
+.quick-item-title {
+  font-size: 12px;
+  color: #1f2a44;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.message-tabs .ant-tabs-nav {
+  margin-bottom: 8px !important;
+}
+
+.compact-toolbar {
+  padding-bottom: 8px;
+  border-bottom: 1px solid #edf2fb;
+}
+
+.compact-toolbar .ant-btn,
+.compact-toolbar .ant-select,
+.compact-toolbar .ant-picker,
+.compact-toolbar .ant-input-affix-wrapper {
+  height: 30px;
+}
+
+.message-body {
+  min-height: 420px;
+}
+
+.message-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 8px 0 10px;
+}
+
+.message-panel .ant-card-body {
+  min-height: 620px;
+  padding-top: 6px !important;
+}
+
+.message-empty-wrap {
+  height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px dashed #e3e9f3;
+  border-bottom: 1px dashed #e3e9f3;
+}
+
+.message-footer {
+  border-top: 1px solid #edf1f8;
+  margin-top: 8px;
+  padding-top: 8px;
+  color: #8b95a7;
+  font-size: 12px;
+}
+
+.ant-typography,
+.ant-card-head-title,
+.ant-tabs-tab,
+.ant-btn,
+.ant-input,
+.ant-select-selector {
+  color: #1f2a44;
+}
+
+.login-wrap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.login-card {
+  width: min(460px, 100%);
+  border: 1px solid #d4deef !important;
+  box-shadow: 0 12px 30px rgba(78, 134, 232, 0.12);
+}
+
+.login-title.ant-typography {
+  margin-bottom: 0 !important;
+  color: #305fae !important;
+}
+
+.login-subtitle {
+  display: block;
+  margin-bottom: 18px;
+  color: #6e8097;
+}
+
+.form-alert {
+  margin-top: 14px;
+}
