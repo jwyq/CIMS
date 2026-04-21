@@ -1,0 +1,326 @@
+/**
+ * LC 风格：查询条 + 操作栏 + 表格（紧凑 24px 控件、#4971df 主色、表头灰底、斑马纹）
+ * 仅作用于带 .lc-query-page 的根节点（见 QueryActionTableLayout variant="lc"）
+ */
+
+.lc-query-page {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 对应原 pagecontainer：半透明白底 + 白边 */
+.lc-query-page__inner {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-content: end;
+  background-color: hsla(0, 0%, 100%, 0.7);
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+}
+
+.lc-query-page .qat-filter {
+  padding: 0;
+  margin-bottom: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.lc-query-page .qat-filter-form.ant-form {
+  padding: 16px 24px 16px;
+}
+
+@media (max-width: 576px) {
+  .lc-query-page .qat-filter-form.ant-form {
+    padding: 12px 12px 12px;
+  }
+}
+
+/* 与 Ant Design 5/6 inline：自然换行，无横向滚动条；间距用 gap */
+.lc-query-page .qat-filter-form.ant-form-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  row-gap: 12px;
+}
+
+.lc-query-page .qat-filter-form.ant-form-inline .ant-form-item {
+  margin-bottom: 0 !important;
+  margin-inline-end: 0 !important;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.lc-query-page .qat-filter-form.ant-form-inline .qat-filter-actions {
+  flex: 0 0 auto;
+}
+
+.lc-query-page .qat-filter-form .ant-form-item-row {
+  align-items: center !important;
+}
+
+.lc-query-page .qat-filter-form .ant-form-item-control {
+  max-width: 100%;
+}
+
+.lc-query-page .qat-filter-form .ant-form-item-label {
+  padding-bottom: 0 !important;
+}
+
+.lc-query-page .qat-filter-form .ant-form-item-label > label {
+  font-size: 14px !important;
+  line-height: 24px !important;
+  height: auto !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.lc-query-page .qat-filter-form .ant-form-item-control-input-content {
+  min-height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.lc-query-page .qat-filter-form .ant-input,
+.lc-query-page .qat-filter-form .ant-input-affix-wrapper {
+  height: 24px !important;
+  font-size: 14px !important;
+  line-height: 14px !important;
+  width: min(300px, 100%) !important;
+  max-width: 300px;
+  min-width: 0;
+  box-sizing: border-box;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-radius: 2px;
+}
+
+.lc-query-page .qat-filter-form .ant-input-affix-wrapper .ant-input {
+  width: 100% !important;
+}
+
+.lc-query-page .qat-filter-form .ant-select-selector {
+  height: 24px !important;
+  font-size: 14px !important;
+  line-height: 22px !important;
+  min-height: 24px !important;
+}
+
+.lc-query-page .qat-filter-form .ant-select-arrow,
+.lc-query-page .qat-filter-form .ant-select-clear {
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+.lc-query-page .qat-filter-actions .ant-btn-primary {
+  margin-left: 0;
+  padding: 0 12px !important;
+  height: 24px !important;
+  background-color: #4971df !important;
+  border-color: #4971df !important;
+  font-size: 14px !important;
+  line-height: 14px !important;
+  border-radius: 2px;
+  box-shadow: none !important;
+}
+
+.lc-query-page .qat-filter-actions .ant-btn:not(.ant-btn-primary) {
+  padding: 0 12px !important;
+  height: 24px !important;
+  background-color: #ffffff !important;
+  border-color: #bebfc4 !important;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015) !important;
+  font-size: 14px !important;
+  line-height: 14px !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+  border-radius: 2px;
+}
+
+/* 操作栏：自然换行，无横向滚动条 */
+.lc-query-page .qat-actions {
+  padding: 0 24px 16px;
+  margin-bottom: 0;
+  border-bottom: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+@media (max-width: 576px) {
+  .lc-query-page .qat-actions {
+    padding: 0 12px 12px;
+  }
+}
+
+.lc-query-page .qat-actions .ant-btn {
+  padding: 0 12px !important;
+  height: 24px !important;
+  background-color: #ffffff !important;
+  border-color: #bebfc4 !important;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015) !important;
+  font-size: 14px !important;
+  line-height: 14px !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+  border-radius: 2px;
+  font-weight: 400;
+}
+
+.lc-query-page .qat-actions .ant-btn-primary {
+  background-color: #4971df !important;
+  border-color: #4971df !important;
+  color: #ffffff !important;
+}
+
+.lc-query-page .qat-actions .ant-btn-dangerous {
+  color: #cf1322 !important;
+  border-color: #ffccc7 !important;
+  background-color: #ffffff !important;
+}
+
+.lc-query-page .qat-actions .ant-btn[disabled] {
+  border-color: #bebfc4 !important;
+  background: #f4f4f5 !important;
+  color: rgba(41, 44, 61, 0.4) !important;
+}
+
+/* 表格区：不裁切底部分页条 */
+.lc-query-page .qat-table {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 0 24px 16px;
+  overflow: visible;
+}
+
+.lc-query-page .qat-table .ant-table-wrapper {
+  overflow: visible;
+}
+
+.lc-query-page .qat-table .ant-table-pagination {
+  margin: 12px 0 0 !important;
+  padding-top: 4px !important;
+  flex-shrink: 0;
+}
+
+.lc-query-page .qat-table .ant-table {
+  border: 1px solid #c2c7d6;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.lc-query-page .qat-table .ant-table-measure-row {
+  visibility: collapse;
+}
+
+.lc-query-page .qat-table .ant-table-thead > tr > th {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  height: 34px !important;
+  padding: 6px 10px !important;
+  text-align: center !important;
+  border-right: 1px solid #d4d5d8 !important;
+  background-color: #edeef3 !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.lc-query-page .qat-table .ant-table-thead > tr > th:last-child {
+  border-right: none !important;
+}
+
+.lc-query-page .qat-table .ant-table-tbody > tr > td {
+  height: 35px !important;
+  padding: 6px 10px !important;
+  font-size: 14px !important;
+  text-align: center !important;
+  border-right: 1px solid #d4d5d8 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lc-query-page .qat-table .ant-table-tbody > tr > td:last-child {
+  border-right: none !important;
+}
+
+.lc-query-page .qat-table .ant-table-tbody > tr:nth-child(odd) > td {
+  background-color: #f9f9fb !important;
+}
+
+.lc-query-page .qat-table .ant-table-tbody > tr:nth-child(even) > td {
+  background-color: #ffffff !important;
+}
+
+.lc-query-page .qat-table .ant-table-tbody > tr:hover > td {
+  background: rgba(197, 218, 249, 0.4) !important;
+}
+
+.lc-query-page .qat-table .ant-radio-inner {
+  border-radius: 50% !important;
+}
+
+/* 分页条 */
+.lc-query-page .ant-pagination {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px !important;
+  padding: 0 8px;
+}
+
+.lc-query-page .ant-pagination-item,
+.lc-query-page .ant-pagination-prev,
+.lc-query-page .ant-pagination-next,
+.lc-query-page .ant-pagination-jump-prev,
+.lc-query-page .ant-pagination-jump-next {
+  min-width: 32px;
+  height: 24px;
+  line-height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lc-query-page .ant-pagination-item a,
+.lc-query-page .ant-pagination-prev button,
+.lc-query-page .ant-pagination-next button {
+  line-height: 24px;
+}
+
+.lc-query-page .ant-pagination-options .ant-select-selector {
+  height: 24px !important;
+  min-height: 24px !important;
+}
+
+.lc-query-page .ant-pagination-options-quick-jumper input {
+  height: 24px;
+  line-height: 24px;
+}
+
+/* 角色页外层 Card：让 LC 白底块贴边展示，并保留 system-fill-card 的滚动 */
+.lc-roles-card.ant-card {
+  background: transparent;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.lc-roles-card.system-fill-card .ant-card-body {
+  padding: 0;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}

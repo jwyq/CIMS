@@ -1,0 +1,116 @@
+/**
+ * 管理页通用布局：查询区 → 操作按钮栏 → 表格
+ * 用于系统管理、审批等「筛选 + 批量操作 + 列表」场景
+ */
+
+.qat-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+}
+
+/* 查询条：浅蓝渐变 + 轻阴影，与银行后台常见风格一致 */
+.qat-filter {
+  padding: 18px 20px 20px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(73, 113, 223, 0.16);
+  background: linear-gradient(155deg, #f9fcff 0%, #eef4fc 42%, #f5f9ff 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 4px 18px rgba(53, 94, 171, 0.07);
+}
+
+.qat-filter-form.ant-form-inline {
+  row-gap: 12px;
+  column-gap: 16px;
+}
+
+.qat-filter-form .ant-form-item {
+  margin-bottom: 0 !important;
+}
+
+.qat-filter-form .ant-form-item-label > label {
+  color: #1e3a5f;
+  font-weight: 600;
+  font-size: 13px;
+  height: 32px;
+  line-height: 32px;
+}
+
+.qat-filter-form .ant-input,
+.qat-filter-form .ant-input-affix-wrapper {
+  border-radius: 8px;
+  border-color: #c8d6ee;
+}
+
+.qat-filter-form .ant-input:hover,
+.qat-filter-form .ant-input-affix-wrapper:hover {
+  border-color: #90b0e0;
+}
+
+.qat-filter-actions.ant-form-item {
+  margin-inline-start: 8px;
+}
+
+.qat-filter-actions .ant-btn {
+  min-width: 72px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+.qat-filter-actions .ant-btn-primary {
+  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.28);
+}
+
+.qat-filter-actions .ant-btn-default {
+  border-color: #c8d6ee;
+  color: #3d5a80;
+}
+
+/* 操作栏：与查询区分层，主按钮略突出 */
+.qat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px 16px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(200, 218, 238, 0.65);
+}
+
+.qat-actions .ant-btn {
+  border-radius: 8px;
+  height: 34px;
+  padding-inline: 16px;
+  font-weight: 500;
+}
+
+.qat-actions .ant-btn-primary {
+  box-shadow: 0 2px 10px rgba(22, 119, 255, 0.25);
+}
+
+.qat-actions .ant-btn-dangerous {
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.15);
+}
+
+/* 表格容器：白底圆角托盘 */
+.qat-table {
+  flex: 1;
+  min-height: 0;
+  padding-top: 4px;
+}
+
+.qat-table .ant-table-wrapper,
+.qat-table .ant-table {
+  border-radius: 10px;
+}
+
+.qat-table .ant-table {
+  box-shadow: 0 2px 14px rgba(25, 45, 80, 0.05);
+}
+
+.qat-table .ant-table-tbody > tr.ant-table-row:hover > td {
+  background: rgba(236, 245, 255, 0.75) !important;
+}

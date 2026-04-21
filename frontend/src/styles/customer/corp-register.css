@@ -1,0 +1,342 @@
+/* 公司客户注册：浅灰蓝底统一；左右分栏，左侧说明区与右侧表单同色 */
+
+.corp-register-page-root {
+  --corp-register-surface: #f0f3f9;
+}
+
+.corp-register-page-root.customer-page {
+  margin: 0;
+  padding: 0 8px 6px;
+  background: var(--corp-register-surface);
+}
+
+.corp-register-page-root .customer-portal {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.corp-register-page-root .customer-portal--ref {
+  background: var(--corp-register-surface) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.corp-register-page-root .customer-portal-alert {
+  flex-shrink: 0;
+  margin: 0 auto 8px;
+  width: 100%;
+  max-width: 1100px;
+  border-radius: 8px;
+}
+
+.customer-portal-body--corp-register {
+  padding: 10px clamp(16px, 4vw, 48px) 12px !important;
+  background: var(--corp-register-surface) !important;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: auto;
+}
+
+.corp-register-shell {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  flex: 0 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(220px, 34%) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0;
+  border-radius: 10px;
+  overflow: visible;
+  border: none;
+  box-shadow: none;
+  background: var(--corp-register-surface);
+}
+
+/* 左侧说明区：与右侧、整页同色，无竖线分界 */
+.corp-register-aside {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  background: var(--corp-register-surface);
+  border-right: none;
+}
+
+.corp-register-aside-inner {
+  padding: 22px 20px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.corp-register-aside-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(135deg, #5a8fdf 0%, #4971df 55%, #2e5cb8 100%);
+  box-shadow: 0 6px 16px rgba(53, 94, 171, 0.22);
+  flex-shrink: 0;
+}
+
+.corp-register-aside-icon {
+  font-size: 24px;
+}
+
+.corp-register-aside-title {
+  margin: 4px 0 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e3a5f;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+.corp-register-aside-lead {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(30, 58, 95, 0.82);
+}
+
+.corp-register-aside-list {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.corp-register-aside-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #4a5f7a;
+}
+
+.corp-register-aside-list-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #2e7d32;
+  font-size: 13px;
+}
+
+.corp-register-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--corp-register-surface);
+  padding: 18px clamp(18px, 2.5vw, 28px) 22px;
+  overflow: visible;
+}
+
+.corp-register-main-header {
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.corp-register-title.ant-typography {
+  margin: 0;
+  color: #1e3a5f;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+}
+
+.corp-register-form {
+  flex: 0 0 auto;
+}
+
+.corp-register-form .ant-form-item {
+  margin-bottom: 10px;
+}
+
+.corp-register-form.ant-form-horizontal .ant-form-item-label {
+  flex: 0 0 148px;
+  max-width: 148px;
+  padding-bottom: 0 !important;
+}
+
+.corp-register-form.ant-form-horizontal .ant-form-item-label > label {
+  height: auto;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.75);
+  justify-content: flex-start;
+  text-align: left;
+  width: 100%;
+}
+
+.corp-register-form .ant-form-item-control {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 480px;
+}
+
+.corp-register-form .ant-form-item-control-input {
+  width: 100%;
+  max-width: 480px;
+}
+
+.corp-register-form .ant-form-item-control-input-content {
+  width: 100%;
+  max-width: 480px;
+}
+
+.corp-register-form .ant-select.corp-register-control {
+  width: 100% !important;
+  max-width: 100%;
+  display: block;
+}
+
+.corp-register-field-block {
+  width: 100%;
+  max-width: 480px;
+  box-sizing: border-box;
+}
+
+.corp-register-id-extra {
+  margin-top: 2px;
+  text-align: right;
+  line-height: 1.2;
+}
+
+.corp-register-item-idno {
+  margin-bottom: 10px;
+}
+
+.corp-register-control {
+  width: 100%;
+}
+
+.corp-register-readonly.ant-input {
+  background: #f7f8fa;
+  color: rgba(0, 0, 0, 0.65);
+  cursor: default;
+}
+
+.corp-register-form .ant-select {
+  width: 100%;
+  min-width: 0;
+}
+
+.corp-register-form .ant-input,
+.corp-register-form .ant-input-affix-wrapper,
+.corp-register-form .ant-select {
+  border-radius: 6px;
+}
+
+.corp-register-form .ant-input-affix-wrapper {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ant-control-height, 32px);
+}
+
+.corp-register-form .ant-input-affix-wrapper:focus-within,
+.corp-register-form .ant-select.ant-select-focused {
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.12);
+}
+
+.corp-register-form .ant-select.ant-select-single {
+  display: inline-flex !important;
+  align-items: center !important;
+  width: 100%;
+  min-height: var(--ant-control-height, 32px);
+}
+
+.corp-register-form .ant-select .ant-select-content {
+  flex: 1;
+  min-width: 0;
+  align-self: center;
+}
+
+.corp-register-form .ant-select .ant-select-suffix {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-inline-start: auto;
+}
+
+.corp-register-label-info {
+  color: #1565c0;
+  font-size: 12px;
+}
+
+.corp-register-gen-id {
+  padding: 0;
+  height: auto;
+  font-size: 12px;
+  color: #1565c0;
+}
+
+.corp-register-actions {
+  margin-bottom: 0 !important;
+  margin-top: 4px !important;
+}
+
+.corp-register-actions .ant-form-item-control-input {
+  max-width: 480px;
+}
+
+.corp-register-actions .ant-form-item-control-input-content {
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.corp-register-btn-clear {
+  min-width: 88px;
+}
+
+.corp-register-btn-submit {
+  min-width: 88px;
+}
+
+@media (max-width: 960px) {
+  .customer-portal-body--corp-register {
+    overflow-y: auto;
+  }
+
+  .corp-register-shell {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+  }
+
+  .corp-register-aside {
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .corp-register-aside-inner {
+    padding: 18px 18px 16px;
+  }
+
+  .corp-register-main {
+    overflow: visible;
+  }
+
+  .corp-register-form.ant-form-horizontal .ant-form-item-label {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .corp-register-form .ant-form-item-control,
+  .corp-register-field-block {
+    max-width: none;
+  }
+}
