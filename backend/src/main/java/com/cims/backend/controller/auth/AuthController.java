@@ -1,5 +1,11 @@
 package com.cims.backend.controller.auth;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description 认证相关接口控制器，提供登录能力
+ */
+
 import com.cims.backend.dto.ApiResponse;
 import com.cims.backend.dto.LoginRequest;
 import com.cims.backend.dto.LoginResponse;
@@ -36,6 +42,7 @@ public class AuthController {
     @PostMapping("/login")
     public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         log.info("POST /api/auth/login username={}", loginRequest.getUsername());
-        return ApiResponse.success(authService.login(loginRequest.getUsername(), loginRequest.getPassword()));
+        LoginResponse loginResponse = authService.login(loginRequest.getUsername(), loginRequest.getPassword());
+        return ApiResponse.success(loginResponse);
     }
 }

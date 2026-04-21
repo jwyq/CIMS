@@ -1,5 +1,11 @@
 package com.cims.backend.controller.loan;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description 贷款申请相关接口控制器
+ */
+
 import com.cims.backend.domain.loan.LoanApplication;
 import com.cims.backend.dto.ApiResponse;
 import com.cims.backend.dto.CreateLoanRequest;
@@ -26,12 +32,17 @@ public class LoanController {
     }
 
     @GetMapping
-    public ApiResponse<List<LoanApplication>> loans() {
+    public ApiResponse<List<LoanApplication>> listLoans() {
         return ApiResponse.success(loanService.listLoans());
     }
 
     @PostMapping
     public ApiResponse<LoanApplication> createLoan(@Valid @RequestBody CreateLoanRequest request) {
-        return ApiResponse.success(loanService.createLoan(request.getCustomerId(), request.getAmount(), request.getTermMonths()));
+        LoanApplication createdLoan = loanService.createLoan(
+            request.getCustomerId(),
+            request.getAmount(),
+            request.getTermMonths()
+        );
+        return ApiResponse.success(createdLoan);
     }
 }

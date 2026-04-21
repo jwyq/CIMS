@@ -1,5 +1,11 @@
 package com.cims.backend.service.auth;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description 用户认证业务服务
+ */
+
 import com.cims.backend.domain.UserAccount;
 import com.cims.backend.dto.LoginResponse;
 import com.cims.backend.service.system.SystemService;
@@ -46,7 +52,7 @@ public class AuthService {
      */
     public LoginResponse login(String username, String password) {
         UserAccount account = userRepository.findByUsername(username)
-            .filter(user -> passwordEncoder.matches(password, user.getPassword()) || user.getPassword().equals(password))
+            .filter(user -> isPasswordValid(password, user.getPassword()))
             .orElseThrow(() -> {
                 log.warn("Login failed: user not found or bad credentials, username={}", username);
                 return new IllegalArgumentException("Invalid username or password");
@@ -64,5 +70,10 @@ public class AuthService {
             token,
             resourceCodes
         );
+    }
+
+    private boolean isPasswordValid(String rawPassword, String storedPassword) {
+        // Keep plaintext fallback for compatibility with legacy seed data.
+        return passwordEncoder.matches(rawPassword, storedPassword) || storedPassword.equals(rawPassword);
     }
 }

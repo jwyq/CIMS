@@ -1,5 +1,11 @@
 package com.cims.backend.service.customer;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description 客户管理业务服务
+ */
+
 import com.cims.backend.domain.customer.Customer;
 import com.cims.backend.domain.customer.CustomerBasicInfoHistory;
 import com.cims.backend.dto.CustomerBasicInfoUpdateRequest;
@@ -22,6 +28,12 @@ import java.util.stream.Collectors;
 @Service
 public class CustomerService {
     private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
+    private static final String CUSTOMER_NO_PREFIX = "CUST";
+    private static final int CUSTOMER_NO_RANDOM_LENGTH = 12;
+    private static final String STATUS_ACTIVE = "ACTIVE";
+    private static final String CHANGE_TYPE_REGISTER = "REGISTER";
+    private static final String CHANGE_TYPE_UPDATE_BASIC_INFO = "UPDATE_BASIC_INFO";
+    private static final String EMPTY_JSON = "{}";
 
     private final CustomerRepository customerRepository;
     private final ReferenceService referenceService;
@@ -51,12 +63,9 @@ public class CustomerService {
     }
 
     public Customer registerCustomer(CustomerRegisterRequest request, Long operatorUserId) {
-        SysUserEntity operator = sysUserMapper.selectById(operatorUserId);
-        if (operator == null) {
-            throw new IllegalArgumentException("Operator not found");
-        }
+        SysUserEntity operator = requireOperator(operatorUserId);
         Customer customer = new Customer();
-        customer.setCustomerNo("CUST" + UUID.randomUUID().toString().replace("-", "").substring(0, 12).toUpperCase());
+        customer.setCustomerNo(generateCustomerNo());
         customer.setName(request.getName());
         customer.setIdType(request.getIdType());
         customer.setIdNo(request.getIdNo());
@@ -71,20 +80,14 @@ public class CustomerService {
         customer.setContactAddress(request.getContactAddress());
         customer.setRiskLevel(request.getRiskLevel());
         customer.setRemark(request.getRemark());
-        customer.setStatus("ACTIVE");
+        customer.setStatus(STATUS_ACTIVE);
         customer.setOrgId(operator.getOrgId());
         customer.setDeptId(operator.getDeptId());
         customer.setManagerUserId(operatorUserId);
         customer.setCreatedBy(operatorUserId);
         Customer saved = customerRepository.save(customer);
 
-        CustomerBasicInfoHistory history = new CustomerBasicInfoHistory();
-        history.setCustomerId(saved.getId());
-        history.setChangeType("REGISTER");
-        history.setBeforeSnapshot("{}");
-        history.setAfterSnapshot(buildSnapshot(saved));
-        history.setChangedBy(operatorUserId);
-        customerRepository.insertHistory(history);
+        insertHistory(saved.getId(), CHANGE_TYPE_REGISTER, EMPTY_JSON, buildSnapshot(saved), operatorUserId);
         log.info("Registered customer id={}, customerNo={}", saved.getId(), saved.getCustomerNo());
         enrichCustomer(saved);
         return saved;
@@ -93,31 +96,10 @@ public class CustomerService {
     public Customer updateBasicInfo(Long customerId, CustomerBasicInfoUpdateRequest request, Long operatorUserId) {
         Customer existing = getCustomerDetail(customerId);
         String before = buildSnapshot(existing);
-
-        if (request.getName() != null) { existing.setName(request.getName()); }
-        if (request.getIdType() != null) { existing.setIdType(request.getIdType()); }
-        if (request.getIdNo() != null) { existing.setIdNo(request.getIdNo()); }
-        if (request.getIdValidUntil() != null) { existing.setIdValidUntil(request.getIdValidUntil()); }
-        if (request.getMobile() != null) { existing.setMobile(request.getMobile()); }
-        if (request.getEmail() != null) { existing.setEmail(request.getEmail()); }
-        if (request.getMaritalStatus() != null) { existing.setMaritalStatus(request.getMaritalStatus()); }
-        if (request.getEducationLevel() != null) { existing.setEducationLevel(request.getEducationLevel()); }
-        if (request.getOccupation() != null) { existing.setOccupation(request.getOccupation()); }
-        if (request.getEmployerName() != null) { existing.setEmployerName(request.getEmployerName()); }
-        if (request.getAnnualIncome() != null) { existing.setAnnualIncome(request.getAnnualIncome()); }
-        if (request.getContactAddress() != null) { existing.setContactAddress(request.getContactAddress()); }
-        if (request.getRiskLevel() != null) { existing.setRiskLevel(request.getRiskLevel()); }
-        if (request.getRemark() != null) { existing.setRemark(request.getRemark()); }
-        if (request.getStatus() != null) { existing.setStatus(request.getStatus()); }
+        applyBasicInfoUpdates(existing, request);
 
         Customer saved = customerRepository.save(existing);
-        CustomerBasicInfoHistory history = new CustomerBasicInfoHistory();
-        history.setCustomerId(saved.getId());
-        history.setChangeType("UPDATE_BASIC_INFO");
-        history.setBeforeSnapshot(before);
-        history.setAfterSnapshot(buildSnapshot(saved));
-        history.setChangedBy(operatorUserId);
-        customerRepository.insertHistory(history);
+        insertHistory(saved.getId(), CHANGE_TYPE_UPDATE_BASIC_INFO, before, buildSnapshot(saved), operatorUserId);
         log.info("Updated customer basic info id={}", saved.getId());
         enrichCustomer(saved);
         return saved;
@@ -174,5 +156,50 @@ public class CustomerService {
                 c.setManagerDisplayName(mgrNames.get(c.getManagerUserId()));
             }
         }
+    }
+
+    private SysUserEntity requireOperator(Long operatorUserId) {
+        SysUserEntity operator = sysUserMapper.selectById(operatorUserId);
+        if (operator == null) {
+            throw new IllegalArgumentException("Operator not found: " + operatorUserId);
+        }
+        return operator;
+    }
+
+    private String generateCustomerNo() {
+        String randomSegment = UUID.randomUUID()
+            .toString()
+            .replace("-", "")
+            .substring(0, CUSTOMER_NO_RANDOM_LENGTH)
+            .toUpperCase();
+        return CUSTOMER_NO_PREFIX + randomSegment;
+    }
+
+    private void applyBasicInfoUpdates(Customer existing, CustomerBasicInfoUpdateRequest request) {
+        if (request.getName() != null) { existing.setName(request.getName()); }
+        if (request.getIdType() != null) { existing.setIdType(request.getIdType()); }
+        if (request.getIdNo() != null) { existing.setIdNo(request.getIdNo()); }
+        if (request.getIdValidUntil() != null) { existing.setIdValidUntil(request.getIdValidUntil()); }
+        if (request.getMobile() != null) { existing.setMobile(request.getMobile()); }
+        if (request.getEmail() != null) { existing.setEmail(request.getEmail()); }
+        if (request.getMaritalStatus() != null) { existing.setMaritalStatus(request.getMaritalStatus()); }
+        if (request.getEducationLevel() != null) { existing.setEducationLevel(request.getEducationLevel()); }
+        if (request.getOccupation() != null) { existing.setOccupation(request.getOccupation()); }
+        if (request.getEmployerName() != null) { existing.setEmployerName(request.getEmployerName()); }
+        if (request.getAnnualIncome() != null) { existing.setAnnualIncome(request.getAnnualIncome()); }
+        if (request.getContactAddress() != null) { existing.setContactAddress(request.getContactAddress()); }
+        if (request.getRiskLevel() != null) { existing.setRiskLevel(request.getRiskLevel()); }
+        if (request.getRemark() != null) { existing.setRemark(request.getRemark()); }
+        if (request.getStatus() != null) { existing.setStatus(request.getStatus()); }
+    }
+
+    private void insertHistory(Long customerId, String changeType, String beforeSnapshot, String afterSnapshot, Long operatorUserId) {
+        CustomerBasicInfoHistory history = new CustomerBasicInfoHistory();
+        history.setCustomerId(customerId);
+        history.setChangeType(changeType);
+        history.setBeforeSnapshot(beforeSnapshot);
+        history.setAfterSnapshot(afterSnapshot);
+        history.setChangedBy(operatorUserId);
+        customerRepository.insertHistory(history);
     }
 }

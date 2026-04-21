@@ -1,5 +1,11 @@
 package com.cims.backend.service.reference;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description 参考数据查询业务服务
+ */
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cims.backend.dto.reference.DictEntryResponse;
 import com.cims.backend.dto.reference.OrgOptionResponse;
@@ -72,17 +78,14 @@ public class ReferenceService {
     }
 
     public Map<String, String> labelsByCodes(String dictType, Collection<String> codes) {
-        if (codes == null || codes.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        Set<String> set = codes.stream().filter(Objects::nonNull).filter(s -> !s.isEmpty()).collect(Collectors.toSet());
-        if (set.isEmpty()) {
+        Set<String> normalizedCodes = normalizeNonBlankStrings(codes);
+        if (normalizedCodes.isEmpty()) {
             return Collections.emptyMap();
         }
         List<SysDictEntryEntity> rows = dictEntryMapper.selectList(
             new LambdaQueryWrapper<SysDictEntryEntity>()
                 .eq(SysDictEntryEntity::getDictType, dictType)
-                .in(SysDictEntryEntity::getCode, set)
+                .in(SysDictEntryEntity::getCode, normalizedCodes)
                 .eq(SysDictEntryEntity::getStatus, 1)
         );
         Map<String, String> map = new LinkedHashMap<>();
@@ -112,14 +115,11 @@ public class ReferenceService {
     }
 
     public Map<Long, String> orgNamesByIds(Collection<Long> ids) {
-        if (ids == null || ids.isEmpty()) {
+        Set<Long> normalizedIds = normalizeNonNullIds(ids);
+        if (normalizedIds.isEmpty()) {
             return Collections.emptyMap();
         }
-        Set<Long> set = ids.stream().filter(Objects::nonNull).collect(Collectors.toSet());
-        if (set.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        List<SysOrgEntity> rows = sysOrgMapper.selectBatchIds(set);
+        List<SysOrgEntity> rows = sysOrgMapper.selectBatchIds(normalizedIds);
         Map<Long, String> map = new LinkedHashMap<>();
         for (SysOrgEntity o : rows) {
             map.put(o.getId(), o.getOrgName());
@@ -136,18 +136,35 @@ public class ReferenceService {
     }
 
     public Map<Long, String> userDisplayNamesByIds(Collection<Long> ids) {
-        if (ids == null || ids.isEmpty()) {
+        Set<Long> normalizedIds = normalizeNonNullIds(ids);
+        if (normalizedIds.isEmpty()) {
             return Collections.emptyMap();
         }
-        Set<Long> set = ids.stream().filter(Objects::nonNull).collect(Collectors.toSet());
-        if (set.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        List<SysUserEntity> rows = sysUserMapper.selectBatchIds(set);
+        List<SysUserEntity> rows = sysUserMapper.selectBatchIds(normalizedIds);
         Map<Long, String> map = new LinkedHashMap<>();
         for (SysUserEntity u : rows) {
             map.put(u.getId(), u.getDisplayName());
         }
         return map;
+    }
+
+    private Set<String> normalizeNonBlankStrings(Collection<String> values) {
+        if (values == null || values.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return values.stream()
+            .filter(Objects::nonNull)
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .collect(Collectors.toSet());
+    }
+
+    private Set<Long> normalizeNonNullIds(Collection<Long> values) {
+        if (values == null || values.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return values.stream()
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
 }

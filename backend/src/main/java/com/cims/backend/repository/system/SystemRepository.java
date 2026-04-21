@@ -1,5 +1,11 @@
 package com.cims.backend.repository.system;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description 系统管理相关数据访问仓储
+ */
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cims.backend.domain.system.SystemResource;
 import com.cims.backend.domain.system.SystemRole;
@@ -15,15 +21,18 @@ import com.cims.backend.mapper.system.SysUserMapper;
 import com.cims.backend.mapper.system.SysUserRoleMapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
 public class SystemRepository {
+
+    private static final int ENABLED_STATUS = 1;
 
     private final SysRoleMapper sysRoleMapper;
     private final SysResourceMapper sysResourceMapper;
@@ -113,7 +122,13 @@ public class SystemRepository {
 
     public void saveRoleResources(Long roleId, List<Long> resourceIds) {
         sysRoleResourceMapper.delete(new LambdaQueryWrapper<SysRoleResourceEntity>().eq(SysRoleResourceEntity::getRoleId, roleId));
+        if (resourceIds == null || resourceIds.isEmpty()) {
+            return;
+        }
         for (Long resourceId : resourceIds) {
+            if (resourceId == null) {
+                continue;
+            }
             SysRoleResourceEntity entity = new SysRoleResourceEntity();
             entity.setRoleId(roleId);
             entity.setResourceId(resourceId);
@@ -130,12 +145,10 @@ public class SystemRepository {
     }
 
     public void updateUserDisplayAndStatus(Long userId, String displayName, boolean enabled) {
-        SysUserEntity u = sysUserMapper.selectById(userId);
-        if (u == null) {
-            return;
-        }
+        SysUserEntity u = Optional.ofNullable(sysUserMapper.selectById(userId))
+            .orElseThrow(() -> new IllegalStateException("User not found: " + userId));
         u.setDisplayName(displayName);
-        u.setStatus(enabled ? 1 : 0);
+        u.setStatus(enabled ? ENABLED_STATUS : 0);
         sysUserMapper.updateById(u);
     }
 
@@ -149,7 +162,13 @@ public class SystemRepository {
 
     public void saveUserRoles(Long userId, List<Long> roleIds) {
         sysUserRoleMapper.delete(new LambdaQueryWrapper<SysUserRoleEntity>().eq(SysUserRoleEntity::getUserId, userId));
+        if (roleIds == null || roleIds.isEmpty()) {
+            return;
+        }
         for (Long roleId : roleIds) {
+            if (roleId == null) {
+                continue;
+            }
             SysUserRoleEntity userRole = new SysUserRoleEntity();
             userRole.setUserId(userId);
             userRole.setRoleId(roleId);
@@ -159,14 +178,23 @@ public class SystemRepository {
 
     public List<String> findResourceCodesByRoleCodes(List<String> roleCodes) {
         if (roleCodes == null || roleCodes.isEmpty()) {
-            return new ArrayList<String>();
+            return Collections.emptyList();
         }
-        return sysResourceMapper.selectResourceCodesByRoleCodes(roleCodes);
+        List<String> normalizedRoleCodes = roleCodes.stream()
+            .filter(Objects::nonNull)
+            .map(String::trim)
+            .filter(code -> !code.isEmpty())
+            .distinct()
+            .collect(Collectors.toList());
+        if (normalizedRoleCodes.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return sysResourceMapper.selectResourceCodesByRoleCodes(normalizedRoleCodes);
     }
 
     public List<String> findApiCodesByButtonCode(String buttonCode) {
         if (buttonCode == null || buttonCode.trim().isEmpty()) {
-            return new ArrayList<String>();
+            return Collections.emptyList();
         }
         return sysResourceMapper.selectApiCodesByButtonCode(buttonCode);
     }
@@ -187,7 +215,7 @@ public class SystemRepository {
             roleEntity.getRoleName(),
             roleEntity.getDescription(),
             roleEntity.getScopeType(),
-            roleEntity.getStatus() != null && roleEntity.getStatus() == 1
+            Objects.equals(roleEntity.getStatus(), ENABLED_STATUS)
         );
     }
 
@@ -198,7 +226,7 @@ public class SystemRepository {
         entity.setRoleName(role.getRoleName());
         entity.setDescription(role.getDescription());
         entity.setScopeType(role.getScopeType());
-        entity.setStatus(role.isEnabled() ? 1 : 0);
+        entity.setStatus(role.isEnabled() ? ENABLED_STATUS : 0);
         return entity;
     }
 }

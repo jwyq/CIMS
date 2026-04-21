@@ -1,5 +1,11 @@
 package com.cims.backend.config;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description Spring Security 安全配置，定义鉴权规则与异常响应
+ */
+
 import com.cims.backend.dto.ApiErrorCode;
 import com.cims.backend.dto.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,11 +31,17 @@ import java.io.IOException;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+    private static final int HTTP_STATUS_UNAUTHORIZED = 401;
+    private static final int HTTP_STATUS_FORBIDDEN = 403;
+    private static final String MESSAGE_AUTH_REQUIRED = "Authentication required";
+    private static final String MESSAGE_NO_PERMISSION = "No permission";
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final ObjectMapper objectMapper;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, ObjectMapper objectMapper) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -43,10 +55,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .exceptionHandling()
             .authenticationEntryPoint((request, response, authException) ->
-                writeErrorResponse(response, 401, ApiErrorCode.UNAUTHORIZED, "Authentication required"))
+                writeErrorResponse(response, HTTP_STATUS_UNAUTHORIZED, ApiErrorCode.UNAUTHORIZED, MESSAGE_AUTH_REQUIRED))
             .accessDeniedHandler((request, response, accessDeniedException) -> {
                 log.warn("Access denied at gateway: {}", accessDeniedException.getMessage());
-                writeErrorResponse(response, 403, ApiErrorCode.FORBIDDEN, "No permission");
+                writeErrorResponse(response, HTTP_STATUS_FORBIDDEN, ApiErrorCode.FORBIDDEN, MESSAGE_NO_PERMISSION);
             })
             .and()
             .authorizeRequests()
@@ -83,6 +95,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         response.setStatus(httpStatus);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-        new ObjectMapper().writeValue(response.getWriter(), ApiResponse.fail(code, message));
+        objectMapper.writeValue(response.getWriter(), ApiResponse.fail(code, message));
     }
 }

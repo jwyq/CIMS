@@ -1,6 +1,15 @@
 package com.cims.backend.dto;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description 统一 API 响应对象
+ */
+
 public class ApiResponse<T> {
+
+    private static final int SUCCESS_CODE = 0;
+    private static final String SUCCESS_MESSAGE = "success";
 
     private final int code;
     private final String message;
@@ -13,15 +22,15 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<T>(0, "success", data);
+        return new ApiResponse<>(SUCCESS_CODE, SUCCESS_MESSAGE, data);
     }
 
     public static ApiResponse<Void> successMessage(String message) {
-        return new ApiResponse<Void>(0, message, null);
+        return new ApiResponse<>(SUCCESS_CODE, message, null);
     }
 
     public static ApiResponse<Void> fail(int code, String message) {
-        return new ApiResponse<Void>(code, message, null);
+        return new ApiResponse<>(code, message, null);
     }
 
     public int getCode() {

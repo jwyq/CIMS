@@ -1,5 +1,11 @@
 package com.cims.backend.controller.reference;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description 通用参考数据接口控制器
+ */
+
 import com.cims.backend.dto.ApiResponse;
 import com.cims.backend.dto.reference.DictEntryResponse;
 import com.cims.backend.dto.reference.OrgOptionResponse;
@@ -28,12 +34,12 @@ public class ReferenceController {
     }
 
     @GetMapping("/dicts")
-    public ApiResponse<List<DictEntryResponse>> dicts(@RequestParam @NotBlank String type) {
+    public ApiResponse<List<DictEntryResponse>> listDictEntries(@RequestParam @NotBlank String type) {
         return ApiResponse.success(referenceService.listDictEntries(type));
     }
 
     @GetMapping("/orgs")
-    public ApiResponse<List<OrgOptionResponse>> orgs() {
+    public ApiResponse<List<OrgOptionResponse>> listOrgs() {
         return ApiResponse.success(referenceService.listOrgs());
     }
 }

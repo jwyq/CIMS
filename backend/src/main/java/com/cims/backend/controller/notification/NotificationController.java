@@ -1,5 +1,11 @@
 package com.cims.backend.controller.notification;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description 通知消息查询接口控制器
+ */
+
 import com.cims.backend.domain.notification.NotificationMessage;
 import com.cims.backend.dto.ApiResponse;
 import com.cims.backend.service.notification.NotificationService;
@@ -20,7 +26,7 @@ public class NotificationController {
     }
 
     @GetMapping
-    public ApiResponse<List<NotificationMessage>> notifications() {
+    public ApiResponse<List<NotificationMessage>> listNotifications() {
         return ApiResponse.success(notificationService.listNotifications());
     }
 }

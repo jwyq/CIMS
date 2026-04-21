@@ -1,5 +1,11 @@
 package com.cims.backend.controller.customer;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description 客户管理相关接口控制器
+ */
+
 import com.cims.backend.domain.customer.Customer;
 import com.cims.backend.domain.customer.CustomerBasicInfoHistory;
 import com.cims.backend.dto.ApiResponse;
@@ -20,6 +26,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
+
+    private static final String ERROR_NOT_AUTHENTICATED = "Not authenticated";
+    private static final String ERROR_USER_NOT_FOUND = "User not found";
 
     private final CustomerService customerService;
     private final UserRepository userRepository;
@@ -53,16 +62,17 @@ public class CustomerController {
     private Long currentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || auth.getName() == null || auth.getName().isEmpty()) {
-            throw new IllegalStateException("Not authenticated");
+            throw new IllegalStateException(ERROR_NOT_AUTHENTICATED);
         }
         return userRepository.findByUsername(auth.getName())
             .map(UserAccount::getUserId)
-            .orElseThrow(() -> new IllegalStateException("User not found"));
+            .orElseThrow(() -> new IllegalStateException(ERROR_USER_NOT_FOUND));
     }
 
     @PutMapping("/{customerId}/basic-info")
     public ApiResponse<Customer> updateBasicInfo(@PathVariable Long customerId, @RequestBody CustomerBasicInfoUpdateRequest request) {
-        return ApiResponse.success(customerService.updateBasicInfo(customerId, request, 1L));
+        Long operatorId = currentUserId();
+        return ApiResponse.success(customerService.updateBasicInfo(customerId, request, operatorId));
     }
 
     @GetMapping("/{customerId}/basic-info-history")

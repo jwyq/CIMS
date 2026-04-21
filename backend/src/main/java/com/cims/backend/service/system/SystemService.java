@@ -1,5 +1,11 @@
 package com.cims.backend.service.system;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description 系统管理业务服务
+ */
+
 import com.cims.backend.domain.system.SystemResource;
 import com.cims.backend.domain.system.SystemRole;
 import com.cims.backend.dto.system.ResourceTreeNodeResponse;
@@ -14,10 +20,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,6 +36,7 @@ import java.util.stream.Collectors;
 public class SystemService {
 
     private static final Logger log = LoggerFactory.getLogger(SystemService.class);
+    private static final int ENABLED_STATUS = 1;
 
     private final SystemRepository systemRepository;
 
@@ -75,21 +84,13 @@ public class SystemService {
      * 删除角色（含关联数据清理）。
      */
     public void deleteRole(Long roleId) {
-        systemRepository.findRoleById(roleId)
-            .orElseThrow(() -> {
-                log.warn("deleteRole failed: role not found roleId={}", roleId);
-                return new IllegalStateException("Role not found");
-            });
+        requireRole(roleId, "deleteRole");
         systemRepository.deleteRoleById(roleId);
         log.info("deleteRole success: roleId={}", roleId);
     }
 
     public RoleResponse updateRole(Long roleId, RoleUpdateRequest request) {
-        SystemRole role = systemRepository.findRoleById(roleId)
-            .orElseThrow(() -> {
-                log.warn("updateRole failed: role not found roleId={}", roleId);
-                return new IllegalStateException("Role not found");
-            });
+        SystemRole role = requireRole(roleId, "updateRole");
         role.setRoleName(request.getRoleName());
         role.setDescription(request.getDescription());
         role.setScopeType(request.getScopeType());
@@ -157,11 +158,7 @@ public class SystemService {
      * 查询角色已授权的资源主键列表。
      */
     public List<Long> roleResourceIds(Long roleId) {
-        systemRepository.findRoleById(roleId)
-            .orElseThrow(() -> {
-                log.warn("roleResourceIds: role not found roleId={}", roleId);
-                return new IllegalStateException("Role not found");
-            });
+        requireRole(roleId, "roleResourceIds");
         Set<Long> ids = systemRepository.findResourceIdsByRoleId(roleId);
         return ids.stream().sorted().collect(Collectors.toList());
     }
@@ -170,11 +167,7 @@ public class SystemService {
      * 覆盖写入角色与资源的绑定关系。
      */
     public void grantRoleResources(Long roleId, List<Long> resourceIds) {
-        systemRepository.findRoleById(roleId)
-            .orElseThrow(() -> {
-                log.warn("grantRoleResources: role not found roleId={}", roleId);
-                return new IllegalStateException("Role not found");
-            });
+        requireRole(roleId, "grantRoleResources");
         systemRepository.saveRoleResources(roleId, resourceIds);
         log.info("grantRoleResources done: roleId={}, resourceCount={}", roleId, resourceIds != null ? resourceIds.size() : 0);
     }
@@ -188,7 +181,7 @@ public class SystemService {
                 List<Long> roleIds = systemRepository.findRoleIdsByUserId(user.getId()).stream()
                     .sorted()
                     .collect(Collectors.toList());
-                boolean enabled = user.getStatus() != null && user.getStatus() == 1;
+                boolean enabled = Objects.equals(user.getStatus(), ENABLED_STATUS);
                 return new SystemUserResponse(
                     user.getId(),
                     user.getUsername(),
@@ -205,11 +198,7 @@ public class SystemService {
      * 查询用户已绑定的角色 id 列表。
      */
     public List<Long> userRoleIds(Long userId) {
-        systemRepository.findUserEntityById(userId)
-            .orElseThrow(() -> {
-                log.warn("userRoleIds: user not found userId={}", userId);
-                return new IllegalStateException("User not found");
-            });
+        requireUser(userId, "userRoleIds");
         return systemRepository.findRoleIdsByUserId(userId).stream().sorted().collect(Collectors.toList());
     }
 
@@ -217,17 +206,9 @@ public class SystemService {
      * 覆盖写入用户与角色的绑定关系。
      */
     public void grantUserRoles(Long userId, List<Long> roleIds) {
-        systemRepository.findUserEntityById(userId)
-            .orElseThrow(() -> {
-                log.warn("grantUserRoles: user not found userId={}", userId);
-                return new IllegalStateException("User not found");
-            });
+        requireUser(userId, "grantUserRoles");
         for (Long roleId : roleIds) {
-            systemRepository.findRoleById(roleId)
-                .orElseThrow(() -> {
-                    log.warn("grantUserRoles: role not found roleId={}", roleId);
-                    return new IllegalStateException("Role not found: " + roleId);
-                });
+            requireRole(roleId, "grantUserRoles");
         }
         systemRepository.saveUserRoles(userId, roleIds);
         log.info("grantUserRoles done: userId={}, roleCount={}", userId, roleIds != null ? roleIds.size() : 0);
@@ -237,11 +218,7 @@ public class SystemService {
      * 更新用户展示名与启用状态。
      */
     public void updateUser(UserUpdateCommand cmd) {
-        systemRepository.findUserEntityById(cmd.getUserId())
-            .orElseThrow(() -> {
-                log.warn("updateUser: user not found userId={}", cmd.getUserId());
-                return new IllegalStateException("User not found");
-            });
+        requireUser(cmd.getUserId(), "updateUser");
         systemRepository.updateUserDisplayAndStatus(cmd.getUserId(), cmd.getDisplayName(), cmd.getEnabled());
         log.info("updateUser success: userId={}", cmd.getUserId());
     }
@@ -272,9 +249,25 @@ public class SystemService {
      */
     private List<String> resolveBindingApiCodes(SystemResource resource) {
         if (!"BUTTON".equalsIgnoreCase(resource.getResourceType())) {
-            return new ArrayList<String>();
+            return Collections.emptyList();
         }
         List<String> mapped = systemRepository.findApiCodesByButtonCode(resource.getResourceCode());
-        return mapped == null ? new ArrayList<String>() : new ArrayList<String>(mapped);
+        return mapped == null ? Collections.emptyList() : new ArrayList<>(mapped);
+    }
+
+    private SystemRole requireRole(Long roleId, String action) {
+        return systemRepository.findRoleById(roleId)
+            .orElseThrow(() -> {
+                log.warn("{} failed: role not found roleId={}", action, roleId);
+                return new IllegalStateException("Role not found: " + roleId);
+            });
+    }
+
+    private void requireUser(Long userId, String action) {
+        systemRepository.findUserEntityById(userId)
+            .orElseThrow(() -> {
+                log.warn("{} failed: user not found userId={}", action, userId);
+                return new IllegalStateException("User not found: " + userId);
+            });
     }
 }

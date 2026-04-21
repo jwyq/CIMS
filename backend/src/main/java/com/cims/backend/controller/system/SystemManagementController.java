@@ -1,5 +1,11 @@
 package com.cims.backend.controller.system;
 
+/**
+ * @autuor y5035
+ * @since 2026-04-20
+ * @description 系统管理模块接口控制器
+ */
+
 import com.cims.backend.dto.ApiResponse;
 import com.cims.backend.dto.system.ResourceTreeNodeResponse;
 import com.cims.backend.dto.system.RoleCreateRequest;
@@ -34,6 +40,7 @@ import java.util.List;
 public class SystemManagementController {
 
     private static final Logger log = LoggerFactory.getLogger(SystemManagementController.class);
+    private static final String SUCCESS_MESSAGE = "ok";
 
     private final SystemService systemService;
 
@@ -71,18 +78,14 @@ public class SystemManagementController {
     public ApiResponse<Void> deleteRole(@Valid @RequestBody RoleIdRequest request) {
         log.info("POST /api/system/deleteRole roleId={}", request.getRoleId());
         systemService.deleteRole(request.getRoleId());
-        return ApiResponse.successMessage("ok");
+        return ApiResponse.successMessage(SUCCESS_MESSAGE);
     }
 
     @PostMapping("/updateRole")
     @RequireApi("api:system:role:update")
     public ApiResponse<RoleResponse> updateRole(@Valid @RequestBody RoleUpdateCommand request) {
         log.info("POST /api/system/updateRole roleId={}", request.getRoleId());
-        RoleUpdateRequest updateRequest = new RoleUpdateRequest();
-        updateRequest.setRoleName(request.getRoleName());
-        updateRequest.setDescription(request.getDescription());
-        updateRequest.setScopeType(request.getScopeType());
-        updateRequest.setEnabled(request.getEnabled());
+        RoleUpdateRequest updateRequest = toRoleUpdateRequest(request);
         return ApiResponse.success(systemService.updateRole(request.getRoleId(), updateRequest));
     }
 
@@ -113,7 +116,7 @@ public class SystemManagementController {
         log.info("POST /api/system/grantRoleResources roleId={}, resourceIdCount={}",
             request.getRoleId(), request.getResourceIds() != null ? request.getResourceIds().size() : 0);
         systemService.grantRoleResources(request.getRoleId(), request.getResourceIds());
-        return ApiResponse.successMessage("ok");
+        return ApiResponse.successMessage(SUCCESS_MESSAGE);
     }
 
     /**
@@ -143,7 +146,7 @@ public class SystemManagementController {
         log.info("POST /api/system/grantUserRoles userId={}, roleIdCount={}",
             request.getUserId(), request.getRoleIds() != null ? request.getRoleIds().size() : 0);
         systemService.grantUserRoles(request.getUserId(), request.getRoleIds());
-        return ApiResponse.successMessage("ok");
+        return ApiResponse.successMessage(SUCCESS_MESSAGE);
     }
 
     /**
@@ -154,6 +157,15 @@ public class SystemManagementController {
     public ApiResponse<Void> updateUser(@Valid @RequestBody UserUpdateCommand request) {
         log.info("POST /api/system/updateUser userId={}", request.getUserId());
         systemService.updateUser(request);
-        return ApiResponse.successMessage("ok");
+        return ApiResponse.successMessage(SUCCESS_MESSAGE);
+    }
+
+    private RoleUpdateRequest toRoleUpdateRequest(RoleUpdateCommand request) {
+        RoleUpdateRequest updateRequest = new RoleUpdateRequest();
+        updateRequest.setRoleName(request.getRoleName());
+        updateRequest.setDescription(request.getDescription());
+        updateRequest.setScopeType(request.getScopeType());
+        updateRequest.setEnabled(request.getEnabled());
+        return updateRequest;
     }
 }
